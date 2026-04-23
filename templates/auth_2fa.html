@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificação 2FA</title>
+</head>
+<body>
+    <h2>Autenticação de Dois Fatores</h2>
+    
+    <p>Olá, <strong>{{ session['pre_nome'] }}</strong>!</p>
+    <p>Digite o código de 6 dígitos do seu app:</p>
+    
+    <form method="POST" action="/validar-2fa">
+        <input 
+            name="codigo" 
+            type="text" 
+            pattern="\d*" 
+            maxlength="6" 
+            required 
+            autofocus 
+            autocomplete="one-time-code"
+        >
+        <br><br>
+        <button type="submit">Verificar e Entrar</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:red;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</body>
+</html>

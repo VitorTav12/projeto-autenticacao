@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redefinir Senha</title>
+</head>
+<body>
+
+<h2>Redefinir Senha</h2>
+
+<form method="POST">
+    <input type="password" name="senha" placeholder="Nova senha" required><br><br>
+
+    <input type="text" name="codigo" placeholder="Código 2FA (Authenticator)" required maxlength="6"><br><br>
+
+    <button type="submit">Redefinir</button>
+</form>
+
+<br>
+<a href="/">Voltar ao login</a>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recuperar Senha</title>
+</head>
+<body>
+
+<h2>Recuperar Senha</h2>
+
+<form method="POST">
+    <input type="email" name="email" placeholder="Digite seu email" required>
+    <button type="submit">Enviar</button>
+</form>
+
+<br>
+<a href="/">Voltar ao login</a>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+</body>
+</html>
