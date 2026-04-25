@@ -121,7 +121,6 @@ def resetar_senha(token, nova_senha, codigo_2fa):
     if erro:
         return erro
 
-    # 🔐 NOVO: valida 2FA
     if not verificar_2fa(user.id, user.segredo_2fa, codigo_2fa):
         registrar_log(user.id, "Falha reset: 2FA inválido")
         return "Código 2FA inválido"

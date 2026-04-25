@@ -24,7 +24,7 @@ cursor.execute(
 conn.commit()
 conn.close()
 
-# Geração do QR Code para o Google Authenticator
+# Geração do QR Code para o Authenticator
 uri = pyotp.TOTP(segredo).provisioning_uri(name=email, issuer_name="SistemaEmpresa")
 qrcode.make(uri).save("qrcode.png")
 
@@ -33,5 +33,5 @@ print("\n" + "="*40)
 print("✅ USUÁRIO CRIADO COM SUCESSO!")
 print("👉 Por favor, escaneie o arquivo 'qrcode.png'")
 print("   que apareceu na pasta do seu projeto")
-print("   usando o Google Authenticator.")
+print("   usando o Authenticator.")
 print("="*40 + "\n")

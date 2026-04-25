@@ -19,6 +19,7 @@
 
 <br><br>
 
+<!-- Mensagens -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul>
@@ -29,8 +30,27 @@
   {% endif %}
 {% endwith %}
 
+<!-- Contador de bloqueio -->
 {% if tempo_restante > 0 %}
-<p>Tente novamente em {{ tempo_restante }} segundos</p>
+<p id="contador">Tente novamente em {{ tempo_restante }} segundos</p>
+
+<script>
+    var tempo = Number("{{ tempo_restante }}");
+
+    var contador = document.getElementById("contador");
+
+    var intervalo = setInterval(function() {
+        tempo--;
+
+        if (tempo <= 0) {
+            clearInterval(intervalo);
+            contador.innerText = "Você já pode tentar novamente!";
+            return;
+        }
+
+        contador.innerText = "Tente novamente em " + tempo + " segundos";
+    }, 1000);
+</script>
 {% endif %}
 
 </body>
