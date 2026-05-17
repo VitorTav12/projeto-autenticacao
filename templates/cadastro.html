@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --border: #252932;
+      --accent: #4f8ef7;
+      --accent2: #38e8c5;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --danger: #f87171;
+      --success: #34d399;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(79,142,247,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(56,232,197,0.06) 0%, transparent 50%);
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 2rem;
+    }
+    .flash-msg {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--danger);
+      margin-bottom: 1.25rem;
+    }
+    .field {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+    }
+    input[type="email"] { text-transform: lowercase; }
+ 
+    /* LGPD box */
+    .lgpd-box {
+      background: rgba(79,142,247,0.06);
+      border: 1px solid rgba(79,142,247,0.2);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .lgpd-box h3 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .lgpd-box p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 0.75rem;
+    }
+    .lgpd-box details {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .lgpd-box summary {
+      cursor: pointer;
+      color: var(--accent2);
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      outline: none;
+    }
+    .lgpd-box details[open] p {
+      margin-top: 0.5rem;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checkbox-row label {
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.82rem;
+      color: var(--text);
+      cursor: pointer;
+      margin: 0;
+    }
+    .version-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.25rem;
+    }
+    .btn:hover { background: #3a7ae8; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .login-link {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .login-link a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">⬡ Sistema de Autenticação</div>
+    <h1>Criar conta</h1>
+    <p class="subtitle">Preencha os dados para se cadastrar</p>
+ 
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash-msg">⚠ {{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+ 
+    <form method="POST" action="/cadastro">
+ 
+      <div class="field">
+        <label for="nome">Nome completo</label>
+        <input type="text" id="nome" name="nome" placeholder="Seu nome" required autocomplete="name"/>
+      </div>
+ 
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email"/>
+      </div>
+ 
+      <div class="field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password"/>
+      </div>
+ 
+      <!-- LGPD -->
+      <div class="lgpd-box">
+        <h3>🔒 Conformidade com a LGPD</h3>
+        <p>Seus dados (nome e e-mail) serão utilizados exclusivamente para autenticação e segurança da conta. Não compartilhamos seus dados com terceiros.</p>
+ 
+        <details>
+          <summary>Ver detalhes dos dados coletados</summary>
+          <p><strong>Dados coletados:</strong> nome, e-mail e senha (armazenada com hash seguro Argon2).</p>
+          <p><strong>Finalidade:</strong> identificação, autenticação e recuperação de acesso.</p>
+          <p><strong>Seus direitos:</strong> acesso, correção, portabilidade e exclusão dos seus dados a qualquer momento.</p>
+          <p><strong>Base legal:</strong> Art. 7º, inciso I da Lei nº 13.709/2018 (LGPD) — consentimento do titular.</p>
+        </details>
+ 
+        <div class="checkbox-row">
+          <input type="checkbox" id="lgpd_aceite" name="lgpd_aceite" required/>
+          <label for="lgpd_aceite">
+            Li e concordo com o tratamento dos meus dados pessoais conforme descrito acima, em conformidade com a LGPD (Lei nº 13.709/2018).
+          </label>
+        </div>
+        <div class="version-tag" id="versao-consentimento">
+          Versão do consentimento: <span id="ver-label"></span> — <span id="data-label"></span>
+        </div>
+        <input type="hidden" name="versao_consentimento" id="versao_consentimento" value=""/>
+        <input type="hidden" name="data_consentimento" id="data_consentimento" value=""/>
+      </div>
+ 
+      <button type="submit" class="btn" id="btn-cadastrar" disabled>Criar conta e configurar 2FA</button>
+    </form>
+ 
+    <p class="login-link">Já tem conta? <a href="/">Entrar</a></p>
+  </div>
+ 
+  <script>
+    // Preenche versão e data do consentimento automaticamente
+    const VERSAO_LGPD = "1.0";
+    const agora = new Date();
+    const dataStr = agora.toISOString();
+    const dataLabel = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
+ 
+    document.getElementById('versao_consentimento').value = VERSAO_LGPD;
+    document.getElementById('data_consentimento').value = dataStr;
+    document.getElementById('ver-label').textContent = VERSAO_LGPD;
+    document.getElementById('data-label').textContent = dataLabel;
+ 
+    // Habilita botão somente se checkbox marcado
+    const checkbox = document.getElementById('lgpd_aceite');
+    const btn = document.getElementById('btn-cadastrar');
+    checkbox.addEventListener('change', () => {
+      btn.disabled = !checkbox.checked;
+    });
+ 
+    // Força email lowercase no submit
+    document.querySelector('form').addEventListener('submit', function() {
+      const emailInput = document.getElementById('email');
+      emailInput.value = emailInput.value.toLowerCase();
+    });
+  </script>
+</body>
+</html>

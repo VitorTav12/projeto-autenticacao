@@ -1,57 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Login</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --border: #252932;
+      --accent: #4f8ef7;
+      --accent2: #38e8c5;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(79,142,247,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(56,232,197,0.06) 0%, transparent 50%);
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+    .field { margin-bottom: 1.25rem; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #fff; margin-bottom: 0.75rem; }
+    .btn-primary:hover { background: #3a7ae8; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent2);
+      border: 1px solid rgba(56,232,197,0.35);
+    }
+    .btn-secondary:hover { background: rgba(56,232,197,0.07); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .forgot {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+    }
+    .forgot a { color: var(--muted); text-decoration: none; }
+    .forgot a:hover { color: var(--accent); }
+
+    .flash-msg {
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--danger);
+      margin-bottom: 1.25rem;
+    }
+    .bloqueio {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--danger);
+      margin-top: 1rem;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="logo">⬡ Sistema de Autenticação</div>
+    <h1>Bem-vindo</h1>
+    <p class="subtitle">Entre com sua conta para continuar</p>
 
-<h2>Login</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash-msg">⚠ {{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-<form action="/login" method="POST">
-    <input type="email" name="email" placeholder="Email" required><br><br>
-    <input type="password" name="senha" placeholder="Senha" required><br><br>
-    <button type="submit">Entrar</button>
-</form>
+    <form action="/login" method="POST">
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" placeholder="••••••••" required autocomplete="current-password"/>
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
 
-<br>
+    <div class="divider">ou</div>
 
-<a href="/recuperar">Esqueci minha senha</a>
+    <a href="/cadastro">
+      <button class="btn btn-secondary">Criar nova conta</button>
+    </a>
 
-<br><br>
+    <p class="forgot"><a href="/recuperar">Esqueci minha senha</a></p>
 
-<!-- Mensagens -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul>
-      {% for msg in messages %}
-        <li>{{ msg }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-
-<!-- Contador de bloqueio -->
-{% if tempo_restante > 0 %}
-<p id="contador">Tente novamente em {{ tempo_restante }} segundos</p>
-
-<script>
-    var tempo = Number("{{ tempo_restante }}");
-
-    var contador = document.getElementById("contador");
-
-    var intervalo = setInterval(function() {
+    {% if tempo_restante > 0 %}
+    <div class="bloqueio" id="contador">
+      Aguarde {{ tempo_restante }}s para tentar novamente
+    </div>
+    <script>
+      var tempo = Number("{{ tempo_restante }}");
+      var el = document.getElementById("contador");
+      var intervalo = setInterval(function() {
         tempo--;
-
         if (tempo <= 0) {
-            clearInterval(intervalo);
-            contador.innerText = "Você já pode tentar novamente!";
-            return;
+          clearInterval(intervalo);
+          el.style.color = "#38e8c5";
+          el.style.borderColor = "rgba(56,232,197,0.3)";
+          el.innerText = "Você já pode tentar novamente!";
+          return;
         }
-
-        contador.innerText = "Tente novamente em " + tempo + " segundos";
-    }, 1000);
-</script>
-{% endif %}
-
+        el.innerText = "Aguarde " + tempo + "s para tentar novamente";
+      }, 1000);
+    </script>
+    {% endif %}
+  </div>
 </body>
 </html>

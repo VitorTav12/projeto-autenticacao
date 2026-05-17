@@ -1,20 +1,232 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard Seguro - Home</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --border: #252932;
+      --accent: #4f8ef7;
+      --accent2: #38e8c5;
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(79,142,247,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(56,232,197,0.06) 0%, transparent 50%);
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+    .flash-msg {
+      background: rgba(56,232,197,0.1);
+      border: 1px solid rgba(56,232,197,0.25);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      margin-bottom: 1.25rem;
+    }
+
+    .section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .section h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .section p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.75rem;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-logout {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-logout:hover { color: var(--text); border-color: var(--text); }
+    .btn-danger {
+      background: rgba(248,113,113,0.1);
+      color: var(--danger);
+      border: 1px solid rgba(248,113,113,0.3);
+    }
+    .btn-danger:hover { background: rgba(248,113,113,0.18); }
+
+    /* Modal de confirmação */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      animation: slideUp 0.3s ease;
+    }
+    .modal h2 {
+      font-size: 1.2rem;
+      color: var(--danger);
+      margin-bottom: 0.75rem;
+    }
+    .modal p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .modal p strong { color: var(--text); }
+    .modal-btns { display: flex; gap: 0.75rem; }
+    .modal-btns button {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+    .btn-cancelar {
+      background: var(--border);
+      color: var(--muted);
+    }
+    .btn-cancelar:hover { background: #2e333d; color: var(--text); }
+    .btn-confirmar {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-confirmar:hover { background: #e05555; }
+  </style>
 </head>
 <body>
-    <span>● Sessão Criptografada</span>
-    <h1>Acesso Autorizado!</h1>
-    
-    <p>Bem-vindo ao sistema seguro, <strong>{{ nome }}</strong>.</p>
-    <p>Seu login foi validado com biometria comportamental e MFA (2FA).</p>
-    
-    <hr>
-    
-    <p>Seus logs de acesso foram registrados na base de auditoria.</p>
-    
-    <a href="/logout">Encerrar Sessão</a>
+  <div class="card">
+    <div class="logo">⬡ Sistema de Autenticação</div>
+    <h1>Olá, {{ nome }}!</h1>
+    <p class="subtitle">Você está autenticado com sucesso.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash-msg">✓ {{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="section">
+      <h3>🔒 Seus direitos — LGPD</h3>
+      <p>Conforme a Lei nº 13.709/2018, você pode solicitar a exclusão dos seus dados pessoais a qualquer momento. Seus logs de acesso serão mantidos de forma anônima por obrigação de segurança.</p>
+    </div>
+
+    <!-- Botão de exclusão -->
+    <button class="btn btn-danger" onclick="abrirModal()">
+      🗑 Solicitar exclusão dos meus dados
+    </button>
+
+    <a href="/logout" class="btn btn-logout">Sair da conta</a>
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>⚠ Confirmar exclusão</h2>
+      <p>
+        Você está prestes a excluir <strong>permanentemente</strong> seus dados pessoais (nome, e-mail, senha e configurações de segurança).<br><br>
+        <strong>Esta ação não pode ser desfeita.</strong><br><br>
+        Seus registros de acesso serão mantidos de forma anônima conforme exigência legal.
+      </p>
+      <div class="modal-btns">
+        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        <form method="POST" action="/excluir-conta" style="flex:1">
+          <button type="submit" class="btn-confirmar" style="width:100%">Sim, excluir</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+    function fecharModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+    // Fecha modal clicando fora
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+  </script>
 </body>
 </html>
