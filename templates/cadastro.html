@@ -104,7 +104,6 @@
     }
     input[type="email"] { text-transform: lowercase; }
  
-    /* LGPD box */
     .lgpd-box {
       background: rgba(79,142,247,0.06);
       border: 1px solid rgba(79,142,247,0.2);
@@ -231,7 +230,6 @@
         <input type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password"/>
       </div>
  
-      <!-- LGPD -->
       <div class="lgpd-box">
         <h3>🔒 Conformidade com a LGPD</h3>
         <p>Seus dados (nome e e-mail) serão utilizados exclusivamente para autenticação e segurança da conta. Não compartilhamos seus dados com terceiros.</p>
@@ -264,7 +262,6 @@
   </div>
  
   <script>
-    // Preenche versão e data do consentimento automaticamente
     const VERSAO_LGPD = "1.0";
     const agora = new Date();
     const dataStr = agora.toISOString();
@@ -275,14 +272,12 @@
     document.getElementById('ver-label').textContent = VERSAO_LGPD;
     document.getElementById('data-label').textContent = dataLabel;
  
-    // Habilita botão somente se checkbox marcado
     const checkbox = document.getElementById('lgpd_aceite');
     const btn = document.getElementById('btn-cadastrar');
     checkbox.addEventListener('change', () => {
       btn.disabled = !checkbox.checked;
     });
  
-    // Força email lowercase no submit
     document.querySelector('form').addEventListener('submit', function() {
       const emailInput = document.getElementById('email');
       emailInput.value = emailInput.value.toLowerCase();

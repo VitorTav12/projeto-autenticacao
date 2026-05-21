@@ -1,6 +1,3 @@
-# services/cadastro_service.py
-# Coloque este arquivo dentro da pasta services/
-
 import pyotp
 import qrcode
 import io
@@ -32,16 +29,13 @@ def criar_usuario(nome: str, email: str, senha: str,
     if usuario_dao.buscar_por_email(email):
         return False, "E-mail já cadastrado.", None, None
 
-    # Hash da senha com Argon2
     senha_hash = ph.hash(senha)
 
-    # Gerar segredo TOTP para 2FA
     segredo_2fa = pyotp.random_base32()
 
-    # Inserir no banco
     user_id = usuario_dao.inserir_usuario(
         nome=nome,
-        email=email,                        # já em lowercase
+        email=email,                        
         senha_hash=senha_hash,
         segredo_2fa=segredo_2fa,
         versao_consentimento=versao_consentimento,
@@ -58,7 +52,6 @@ def gerar_qr_url(user_id: int, segredo: str) -> str:
     """
     Gera a URL de dados (data URI) do QR Code para o Google Authenticator.
     """
-    # Busca email do usuário para montar o label do QR
     usuario = usuario_dao.buscar_por_id(user_id)
     email = usuario.email if usuario else f"usuario_{user_id}"
 

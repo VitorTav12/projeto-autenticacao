@@ -48,7 +48,6 @@ def verificar_senha(email, senha):
     if not user:
         return False, "E-mail não cadastrado", None
 
-    # Garante que a senha do banco é string (Argon2 gera texto)
     senha_db = user.senha
     if isinstance(senha_db, (bytes, memoryview)):
         senha_db = bytes(senha_db).decode('utf-8')

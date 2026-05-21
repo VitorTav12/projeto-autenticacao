@@ -1,17 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from services import auth_service
 from services import cadastro_service
 from services.auth_service import solicitar_recuperacao, resetar_senha, validar_token
 from datetime import timedelta
 import time
+import json
 
 app = Flask(__name__)
 app.secret_key = 'chave_secreta_projeto_integrador_2026'
 app.permanent_session_lifetime = timedelta(minutes=5)
-
-# ──────────────────────────────────────────────
-#  LOGIN
-# ──────────────────────────────────────────────
 
 @app.route('/')
 def index():
@@ -74,17 +71,21 @@ def validar_2fa():
 def home():
     if 'usuario_id' not in session:
         return redirect(url_for('index'))
-    return render_template('home.html', nome=session['usuario_nome'])
+
+    from dao import usuario_dao
+    dados = usuario_dao.buscar_dados_titular(session['usuario_id'])
+    logs  = usuario_dao.buscar_logs_usuario(session['usuario_id'])
+
+    return render_template('home.html',
+                           nome=session['usuario_nome'],
+                           dados=dados,
+                           logs=logs)
 
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-# ──────────────────────────────────────────────
-#  RECUPERAÇÃO DE SENHA
-# ──────────────────────────────────────────────
 
 @app.route('/recuperar', methods=['GET', 'POST'])
 def recuperar():
@@ -111,10 +112,6 @@ def resetar(token):
     resultado  = resetar_senha(token, nova_senha, codigo)
     flash(resultado)
     return redirect(url_for('index'))
-
-# ──────────────────────────────────────────────
-#  CADASTRO + SETUP 2FA
-# ──────────────────────────────────────────────
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -189,19 +186,38 @@ def confirmar_2fa_cadastro():
         flash("Código 2FA incorreto. Tente novamente.")
         return redirect(url_for('setup_2fa'))
 
-# ──────────────────────────────────────────────
-#  EXCLUSÃO DE CONTA (LGPD Art. 18)
-# ──────────────────────────────────────────────
-
-@app.route('/excluir-conta', methods=['POST'])
-def excluir_conta():
+@app.route('/exportar-dados')
+def exportar_dados():
+    """4.9 — Exportação dos dados do titular em JSON."""
     if 'usuario_id' not in session:
         return redirect(url_for('index'))
 
-    user_id = session['usuario_id']
+    from dao import usuario_dao
+    dados = usuario_dao.buscar_dados_titular(session['usuario_id'])
+    logs  = usuario_dao.buscar_logs_usuario(session['usuario_id'])
+
+    exportacao = {
+        "dados_pessoais": dados,
+        "logs_acesso": logs
+    }
+
+    response = app.response_class(
+        response=json.dumps(exportacao, ensure_ascii=False, indent=2),
+        status=200,
+        mimetype='application/json',
+        headers={"Content-Disposition": "attachment; filename=meus_dados.json"}
+    )
+    return response
+
+
+@app.route('/excluir-conta', methods=['POST'])
+def excluir_conta():
+    """4.10 — Exclusão dos dados pessoais (LGPD Art. 18)."""
+    if 'usuario_id' not in session:
+        return redirect(url_for('index'))
 
     from dao import usuario_dao
-    usuario_dao.excluir_usuario(user_id)
+    usuario_dao.excluir_usuario(session['usuario_id'])
 
     session.clear()
     flash("Seus dados foram excluídos com sucesso.")

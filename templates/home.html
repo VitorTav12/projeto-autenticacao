@@ -36,7 +36,7 @@
       border-radius: 16px;
       padding: 2.5rem 2rem;
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       box-shadow: 0 24px 64px rgba(0,0,0,0.4);
       animation: slideUp 0.4s ease;
     }
@@ -100,6 +100,14 @@
       text-align: center;
     }
     .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #3a7ae8; }
+    .btn-green {
+      background: rgba(56,232,197,0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(56,232,197,0.3);
+    }
+    .btn-green:hover { background: rgba(56,232,197,0.18); }
     .btn-logout {
       background: transparent;
       color: var(--muted);
@@ -113,7 +121,7 @@
     }
     .btn-danger:hover { background: rgba(248,113,113,0.18); }
 
-    /* Modal de confirmação */
+    /* Modal genérico */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -128,46 +136,60 @@
     .modal-overlay.active { display: flex; }
     .modal {
       background: var(--surface);
-      border: 1px solid rgba(248,113,113,0.3);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 2rem;
-      max-width: 400px;
+      max-width: 440px;
       width: 100%;
       animation: slideUp 0.3s ease;
+      max-height: 80vh;
+      overflow-y: auto;
     }
-    .modal h2 {
-      font-size: 1.2rem;
-      color: var(--danger);
-      margin-bottom: 0.75rem;
-    }
-    .modal p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-    .modal p strong { color: var(--text); }
-    .modal-btns { display: flex; gap: 0.75rem; }
-    .modal-btns button {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
+    .modal h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .modal-close {
+      float: right;
+      background: none;
       border: none;
-      transition: background 0.2s;
-    }
-    .btn-cancelar {
-      background: var(--border);
       color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-top: -4px;
     }
+    .modal-close:hover { color: var(--text); }
+
+    .dado-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .dado-row:last-child { border-bottom: none; }
+    .dado-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .dado-value { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; }
+
+    .log-item {
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      background: var(--bg);
+      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+    }
+    .log-evento { color: var(--text); }
+    .log-data { color: var(--muted); font-size: 0.72rem; font-family: 'IBM Plex Mono', monospace; margin-top: 0.2rem; }
+
+    .modal-danger { border-color: rgba(248,113,113,0.3); }
+    .modal-danger h2 { color: var(--danger); }
+    .modal-btns { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .modal-btns button {
+      flex: 1; padding: 0.75rem; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; border: none; transition: background 0.2s;
+    }
+    .btn-cancelar { background: var(--border); color: var(--muted); }
     .btn-cancelar:hover { background: #2e333d; color: var(--text); }
-    .btn-confirmar {
-      background: var(--danger);
-      color: #fff;
-    }
+    .btn-confirmar { background: var(--danger); color: #fff; }
     .btn-confirmar:hover { background: #e05555; }
   </style>
 </head>
@@ -187,28 +209,80 @@
 
     <div class="section">
       <h3>🔒 Seus direitos — LGPD</h3>
-      <p>Conforme a Lei nº 13.709/2018, você pode solicitar a exclusão dos seus dados pessoais a qualquer momento. Seus logs de acesso serão mantidos de forma anônima por obrigação de segurança.</p>
+      <p>Conforme a Lei nº 13.709/2018, você pode consultar, exportar ou excluir seus dados pessoais a qualquer momento.</p>
     </div>
 
-    <!-- Botão de exclusão -->
-    <button class="btn btn-danger" onclick="abrirModal()">
-      🗑 Solicitar exclusão dos meus dados
-    </button>
+    <button class="btn btn-primary" onclick="abrirDados()">👁 Ver meus dados</button>
+
+    <a href="/exportar-dados" class="btn btn-green">⬇ Exportar meus dados (JSON)</a>
+
+    <button class="btn btn-green" onclick="abrirLogs()">📋 Ver meus logs de acesso</button>
+
+    <button class="btn btn-danger" onclick="abrirExclusao()">🗑 Solicitar exclusão dos meus dados</button>
 
     <a href="/logout" class="btn btn-logout">Sair da conta</a>
   </div>
 
-  <!-- Modal de confirmação -->
-  <div class="modal-overlay" id="modal">
+  <div class="modal-overlay" id="modal-dados">
     <div class="modal">
+      <button class="modal-close" onclick="fechar('modal-dados')">✕</button>
+      <h2>👁 Meus dados pessoais</h2>
+      <div class="dado-row">
+        <span class="dado-label">Nome</span>
+        <span class="dado-value">{{ dados.nome }}</span>
+      </div>
+      <div class="dado-row">
+        <span class="dado-label">E-mail</span>
+        <span class="dado-value">{{ dados.email }}</span>
+      </div>
+      <div class="dado-row">
+        <span class="dado-label">Cadastrado em</span>
+        <span class="dado-value">{{ dados.criado_em }}</span>
+      </div>
+      <div class="dado-row">
+        <span class="dado-label">LGPD aceita</span>
+        <span class="dado-value">{{ "Sim" if dados.lgpd_aceite else "Não" }}</span>
+      </div>
+      <div class="dado-row">
+        <span class="dado-label">Versão consentimento</span>
+        <span class="dado-value">{{ dados.lgpd_versao or "—" }}</span>
+      </div>
+      <div class="dado-row">
+        <span class="dado-label">Data consentimento</span>
+        <span class="dado-value">{{ dados.lgpd_data_aceite or "—" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Logs (5.4) -->
+  <div class="modal-overlay" id="modal-logs">
+    <div class="modal">
+      <button class="modal-close" onclick="fechar('modal-logs')">✕</button>
+      <h2>📋 Logs de acesso</h2>
+      {% if logs %}
+        {% for log in logs %}
+        <div class="log-item">
+          <div class="log-evento">{{ log.evento }}</div>
+          <div class="log-data">{{ log.data_hora }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:var(--muted);font-size:0.85rem">Nenhum log encontrado.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Modal: Exclusão (4.10) -->
+  <div class="modal-overlay" id="modal-exclusao">
+    <div class="modal modal-danger">
       <h2>⚠ Confirmar exclusão</h2>
-      <p>
-        Você está prestes a excluir <strong>permanentemente</strong> seus dados pessoais (nome, e-mail, senha e configurações de segurança).<br><br>
-        <strong>Esta ação não pode ser desfeita.</strong><br><br>
+      <p style="font-size:0.85rem;color:var(--muted);line-height:1.6">
+        Você está prestes a excluir <strong style="color:var(--text)">permanentemente</strong> seus dados pessoais.<br><br>
+        <strong style="color:var(--text)">Esta ação não pode ser desfeita.</strong><br><br>
         Seus registros de acesso serão mantidos de forma anônima conforme exigência legal.
       </p>
       <div class="modal-btns">
-        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        <button class="btn-cancelar" onclick="fechar('modal-exclusao')">Cancelar</button>
         <form method="POST" action="/excluir-conta" style="flex:1">
           <button type="submit" class="btn-confirmar" style="width:100%">Sim, excluir</button>
         </form>
@@ -217,15 +291,16 @@
   </div>
 
   <script>
-    function abrirModal() {
-      document.getElementById('modal').classList.add('active');
-    }
-    function fecharModal() {
-      document.getElementById('modal').classList.remove('active');
-    }
-    // Fecha modal clicando fora
-    document.getElementById('modal').addEventListener('click', function(e) {
-      if (e.target === this) fecharModal();
+    function abrirDados()   { document.getElementById('modal-dados').classList.add('active'); }
+    function abrirLogs()    { document.getElementById('modal-logs').classList.add('active'); }
+    function abrirExclusao(){ document.getElementById('modal-exclusao').classList.add('active'); }
+    function fechar(id)     { document.getElementById(id).classList.remove('active'); }
+
+    // Fecha clicando fora
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+      el.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+      });
     });
   </script>
 </body>

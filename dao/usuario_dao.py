@@ -1,3 +1,5 @@
+# dao/usuario_dao.py
+
 from config import get_connection
 from models.usuario import Usuario
 
@@ -15,9 +17,6 @@ def buscar_por_email(email: str):
             return Usuario(*row) if row else None
     finally:
         conn.close()
-
-
-# Alias para compatibilidade com auth_service.py
 def buscar_usuario_por_email(email: str):
     return buscar_por_email(email)
 
@@ -55,12 +54,6 @@ def buscar_por_token(token: str):
             return user
     finally:
         conn.close()
-
-
-# ──────────────────────────────────────────────
-#  INSERÇÃO
-# ──────────────────────────────────────────────
-
 def inserir_usuario(nome: str, email: str, senha_hash: str,
                     segredo_2fa: str, versao_consentimento: str,
                     data_consentimento: str):
@@ -93,12 +86,6 @@ def inserir_usuario(nome: str, email: str, senha_hash: str,
         return None
     finally:
         conn.close()
-
-
-# ──────────────────────────────────────────────
-#  TOKEN DE RESET
-# ──────────────────────────────────────────────
-
 def salvar_token(user_id: int, token: str, expiracao):
     """Salva token de reset de senha."""
     conn = get_connection()
@@ -132,12 +119,6 @@ def invalidar_token(user_id: int):
             conn.commit()
     finally:
         conn.close()
-
-
-# ──────────────────────────────────────────────
-#  ATUALIZAÇÃO DE SENHA
-# ──────────────────────────────────────────────
-
 def atualizar_senha(user_id: int, nova_senha_hash):
     """Atualiza a senha do usuário."""
     conn = get_connection()
@@ -150,12 +131,6 @@ def atualizar_senha(user_id: int, nova_senha_hash):
             conn.commit()
     finally:
         conn.close()
-
-
-# ──────────────────────────────────────────────
-#  EXCLUSÃO (LGPD Art. 18)
-# ──────────────────────────────────────────────
-
 def excluir_usuario(user_id: int):
     """
     Exclui os dados pessoais do usuário (nome, email, senha, 2FA, consentimento).
@@ -178,5 +153,46 @@ def excluir_usuario(user_id: int):
     except Exception as e:
         conn.rollback()
         print(f"[ERRO] excluir_usuario: {e}")
+    finally:
+        conn.close()
+def buscar_dados_titular(user_id: int):
+    """Retorna todos os dados pessoais do titular (4.8)."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT nome, email, criado_em,
+                          lgpd_aceite, lgpd_versao, lgpd_data_aceite
+                   FROM usuarios WHERE id = %s""",
+                (user_id,)
+            )
+            row = cur.fetchone()
+            if not row:
+                return None
+            return {
+                "nome":            row[0],
+                "email":           row[1],
+                "criado_em":       str(row[2]) if row[2] else None,
+                "lgpd_aceite":     row[3],
+                "lgpd_versao":     row[4],
+                "lgpd_data_aceite": str(row[5]) if row[5] else None,
+            }
+    finally:
+        conn.close()
+
+
+def buscar_logs_usuario(user_id: int):
+    """Retorna os logs de acesso do usuário (5.4)."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT evento, data_hora FROM logs_acesso
+                   WHERE usuario_id = %s
+                   ORDER BY data_hora DESC LIMIT 50""",
+                (user_id,)
+            )
+            rows = cur.fetchall()
+            return [{"evento": r[0], "data_hora": str(r[1])} for r in rows]
     finally:
         conn.close()
